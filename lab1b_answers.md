@@ -1,21 +1,41 @@
-# Lab 1B Report
+# Lab 1B Written Answers
 
-## Part 2 — Training Choices (Discussion)
+## Part 2 — Training Choices (Discussion, by Architecture)
 
-### Learning rate choices
-A learning rate that is too large makes optimization unstable: the loss oscillates and the decision boundary can jump around between epochs. A learning rate that is too small converges very slowly, especially on the spiral dataset where fine curved boundaries are required. In these experiments, values around 0.01 worked well for small/medium models, while wider networks were more stable around 0.005.
+- **2-16-3**
+  - Learning rate: `0.01` was okay, but this small model underfit spirals.
+  - Epochs: needed close to full training to stabilize.
+  - Initialization sensitivity: medium; different starts changed spiral quality.
+  - Note: good for blobs, weaker on complex curved boundaries.
 
-### Optimizer choice (Adam vs SGD)
-Adam was a good default because it adapted per-parameter step sizes and converged quickly on all three datasets with minimal tuning. Plain SGD can still work, but it usually needs more careful learning-rate scheduling and often more epochs to match Adam performance. Since the lab emphasizes architecture comparison rather than optimizer tuning, Adam keeps the comparison cleaner.
+- **2-32-32-3**
+  - Learning rate: `0.01` trained stably.
+  - Epochs: converged faster than 2-16-3.
+  - Initialization sensitivity: lower than the smallest model.
+  - Note: solid balance of speed and accuracy across datasets.
 
-### Epoch count and convergence
-Blobs typically converged fastest because the classes are close to linearly separable. Ellipsoids required moderate training because overlap introduces ambiguity near class boundaries. Spirals needed the most epochs because the model must learn highly nonlinear, intertwined boundaries.
+- **2-64-64-3**
+  - Learning rate: `0.01` worked well and converged smoothly.
+  - Epochs: usually reached a good boundary before the end.
+  - Initialization sensitivity: low-to-medium.
+  - Note: strong performance on spirals without being too slow.
 
-### Sensitivity to initialization
-Shallow/narrow models showed stronger initialization sensitivity on spirals: some starts converged to mediocre boundaries. Deeper or wider networks were generally more robust but still benefited from stable learning rates. Good initialization mainly reduced time-to-convergence and prevented early saturation.
+- **2-64-64-64-3**
+  - Learning rate: `0.01` worked, but depth made training a bit slower.
+  - Epochs: needed more epochs to fully settle than shallower models.
+  - Initialization sensitivity: medium (deeper nets are slightly pickier).
+  - Note: can model complex boundaries well, but not always better than 2-64-64-3.
 
-### Depth/width and training speed
-Increasing width often improved fitting capacity quickly but raised compute cost per epoch. Increasing depth improved representational flexibility for curved boundaries, but deeper models could train slower and be slightly harder to tune. In practice, moderate depth with adequate width gave the best trade-off.
+- **2-128-128-3**
+  - Learning rate: `0.005` was more stable than `0.01`.
+  - Epochs: converged well, but each epoch cost more time.
+  - Initialization sensitivity: low after lowering the learning rate.
+  - Note: high capacity; good results but higher compute cost.
+
+**Short comparison:**
+- Small models train fast but can underfit spirals.
+- Moderate depth/width gives the best trade-off.
+- Bigger/deeper models are not automatically best; they need better tuning and more compute.
 
 ## Part 2 — Reflection Questions
 
