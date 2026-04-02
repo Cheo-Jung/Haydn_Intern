@@ -13,22 +13,56 @@
 \begin{document}
 \maketitle
 
-\section*{Part 2 --- Training Choices (Discussion)}
+\section*{Part 2 --- Training Choices (Discussion, by Architecture)}
 
-\subsection*{Learning rate choices}
-A learning rate that is too large makes optimization unstable: the loss oscillates and the decision boundary can jump around between epochs. A learning rate that is too small converges very slowly, especially on the spiral dataset where fine curved boundaries are required. In these experiments, values around 0.01 worked well for small/medium models, while wider networks were more stable around 0.005.
+\begin{itemize}
+  \item \textbf{2-16-3}
+  \begin{itemize}
+    \item Learning rate: \texttt{0.01} was okay, but this small model underfit spirals.
+    \item Epochs: needed close to full training to stabilize.
+    \item Initialization sensitivity: medium; different starts changed spiral quality.
+    \item Note: good for blobs, weaker on complex curved boundaries.
+  \end{itemize}
 
-\subsection*{Optimizer choice (Adam vs SGD)}
-Adam was a good default because it adapted per-parameter step sizes and converged quickly on all three datasets with minimal tuning. Plain SGD can still work, but it usually needs more careful learning-rate scheduling and often more epochs to match Adam performance. Since the lab emphasizes architecture comparison rather than optimizer tuning, Adam keeps the comparison cleaner.
+  \item \textbf{2-32-32-3}
+  \begin{itemize}
+    \item Learning rate: \texttt{0.01} trained stably.
+    \item Epochs: converged faster than 2-16-3.
+    \item Initialization sensitivity: lower than the smallest model.
+    \item Note: solid balance of speed and accuracy across datasets.
+  \end{itemize}
 
-\subsection*{Epoch count and convergence}
-Blobs typically converged fastest because the classes are close to linearly separable. Ellipsoids required moderate training because overlap introduces ambiguity near class boundaries. Spirals needed the most epochs because the model must learn highly nonlinear, intertwined boundaries.
+  \item \textbf{2-64-64-3}
+  \begin{itemize}
+    \item Learning rate: \texttt{0.01} worked well and converged smoothly.
+    \item Epochs: usually reached a good boundary before the end.
+    \item Initialization sensitivity: low-to-medium.
+    \item Note: strong performance on spirals without being too slow.
+  \end{itemize}
 
-\subsection*{Sensitivity to initialization}
-Shallow/narrow models showed stronger initialization sensitivity on spirals: some starts converged to mediocre boundaries. Deeper or wider networks were generally more robust but still benefited from stable learning rates. Good initialization mainly reduced time-to-convergence and prevented early saturation.
+  \item \textbf{2-64-64-64-3}
+  \begin{itemize}
+    \item Learning rate: \texttt{0.01} worked, but depth made training a bit slower.
+    \item Epochs: needed more epochs to fully settle than shallower models.
+    \item Initialization sensitivity: medium (deeper nets are slightly pickier).
+    \item Note: can model complex boundaries well, but not always better than 2-64-64-3.
+  \end{itemize}
 
-\subsection*{Depth/width and training speed}
-Increasing width often improved fitting capacity quickly but raised compute cost per epoch. Increasing depth improved representational flexibility for curved boundaries, but deeper models could train slower and be slightly harder to tune. In practice, moderate depth with adequate width gave the best trade-off.
+  \item \textbf{2-128-128-3}
+  \begin{itemize}
+    \item Learning rate: \texttt{0.005} was more stable than \texttt{0.01}.
+    \item Epochs: converged well, but each epoch cost more time.
+    \item Initialization sensitivity: low after lowering the learning rate.
+    \item Note: high capacity; good results but higher compute cost.
+  \end{itemize}
+\end{itemize}
+
+\textbf{Short comparison:}
+\begin{itemize}
+  \item Small models train fast but can underfit spirals.
+  \item Moderate depth/width gives the best trade-off.
+  \item Bigger/deeper models are not automatically best; they need better tuning and more compute.
+\end{itemize}
 
 \section*{Part 2 --- Reflection Questions}
 \begin{enumerate}[label=\textbf{\arabic*.}]
