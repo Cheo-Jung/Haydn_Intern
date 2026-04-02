@@ -1,4 +1,4 @@
-# Lab 1B Written Answers
+# Lab 1B Report
 
 ## Part 2 — Training Choices (Discussion)
 
