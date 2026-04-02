@@ -1,0 +1,72 @@
+\documentclass{article}
+\usepackage[margin=1in]{geometry}
+
+\title{Lab 1B Answers}
+\author{Student}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section*{Part 2 - Training choices (by model)}
+
+\textbf{2-16-3}
+
+I used lr 0.01. It trains but not super good on spirals. Blobs are fine. 
+
+\textbf{2-32-32-3}
+
+Also lr 0.01. This one felt more stable and learned faster than 2-16-3.
+
+\textbf{2-64-64-3}
+
+lr 0.01 worked well. This was one of the best overall for me.
+
+\textbf{2-64-64-64-3}
+
+Still lr 0.01. It can fit hard shapes but training is a bit slower.
+
+\textbf{2-128-128-3}
+
+I changed lr to 0.005 because 0.01 was jumpy. It works well but takes more compute.
+
+\textbf{Quick summary:}
+small models are fast but can underfit spirals. very big/deep models can do well but cost more and need better tuning.
+
+\section*{Part 2 - Reflection}
+
+\textbf{1) Why does depth help spirals more than blobs?}
+
+Spirals are very nonlinear, so extra layers help bend the boundary. Blobs are almost linearly separable, so depth is less important.
+
+\textbf{2) Why can wide networks work with low depth?}
+
+A wide layer has many neurons, so it can still build complex boundaries even without many layers.
+
+\textbf{3) Which dataset was hardest?}
+
+Spirals. The classes are mixed around each other, so it is harder to separate.
+
+\textbf{4) Effect of depth/width on training?}
+
+More depth/width usually helps fitting, but training can be slower and more sensitive.
+
+\textbf{5) Do deeper networks always do better?}
+
+No. If data is easy, deeper is not always better. Sometimes it just adds complexity.
+
+\section*{Part 3 - Reflection}
+
+\textbf{1) Why no nonlinearity means linear model?}
+
+Because stacking linear layers is still just a linear function.
+
+\textbf{2) What if ReLU backward is wrong for negative values?}
+
+Then gradients are wrong and training can go in bad directions.
+
+\textbf{3) Why use \texttt{torch.autograd.Function}?}
+
+It is easier and less error-prone. PyTorch can connect your custom op to the rest of the graph automatically.
+
+\end{document}
