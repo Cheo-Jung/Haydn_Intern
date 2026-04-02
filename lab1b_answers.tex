@@ -1,0 +1,97 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{enumitem}
+\usepackage{hyperref}
+
+\title{Lab 1B Written Answers}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section*{Part 2 --- Training Choices (Discussion, by Architecture)}
+
+\begin{itemize}
+  \item \textbf{2-16-3}
+  \begin{itemize}
+    \item Learning rate: \texttt{0.01} was okay, but this small model underfit spirals.
+    \item Epochs: needed close to full training to stabilize.
+    \item Initialization sensitivity: medium; different starts changed spiral quality.
+    \item Note: good for blobs, weaker on complex curved boundaries.
+  \end{itemize}
+
+  \item \textbf{2-32-32-3}
+  \begin{itemize}
+    \item Learning rate: \texttt{0.01} trained stably.
+    \item Epochs: converged faster than 2-16-3.
+    \item Initialization sensitivity: lower than the smallest model.
+    \item Note: solid balance of speed and accuracy across datasets.
+  \end{itemize}
+
+  \item \textbf{2-64-64-3}
+  \begin{itemize}
+    \item Learning rate: \texttt{0.01} worked well and converged smoothly.
+    \item Epochs: usually reached a good boundary before the end.
+    \item Initialization sensitivity: low-to-medium.
+    \item Note: strong performance on spirals without being too slow.
+  \end{itemize}
+
+  \item \textbf{2-64-64-64-3}
+  \begin{itemize}
+    \item Learning rate: \texttt{0.01} worked, but depth made training a bit slower.
+    \item Epochs: needed more epochs to fully settle than shallower models.
+    \item Initialization sensitivity: medium (deeper nets are slightly pickier).
+    \item Note: can model complex boundaries well, but not always better than 2-64-64-3.
+  \end{itemize}
+
+  \item \textbf{2-128-128-3}
+  \begin{itemize}
+    \item Learning rate: \texttt{0.005} was more stable than \texttt{0.01}.
+    \item Epochs: converged well, but each epoch cost more time.
+    \item Initialization sensitivity: low after lowering the learning rate.
+    \item Note: high capacity; good results but higher compute cost.
+  \end{itemize}
+\end{itemize}
+
+\textbf{Short comparison:}
+\begin{itemize}
+  \item Small models train fast but can underfit spirals.
+  \item Moderate depth/width gives the best trade-off.
+  \item Bigger/deeper models are not automatically best; they need better tuning and more compute.
+\end{itemize}
+
+\section*{Part 2 --- Reflection Questions}
+\begin{enumerate}[label=\textbf{\arabic*.}]
+  \item \textbf{Why does adding depth help on the spiral dataset but not on the blobs dataset?}\\
+  Blobs are close to linearly separable, so even simple models already capture the boundary well. Spirals require multiple nonlinear transformations to ``untangle'' class manifolds, which depth provides by composing several learned feature mappings. Therefore, depth adds little on easy linear structure but helps significantly on complex geometry.
+
+  \item \textbf{Why might very wide networks succeed even when they have only one or two hidden layers?}\\
+  Width gives many parallel neurons that can approximate rich nonlinear functions even with limited depth. A sufficiently wide hidden layer can carve complex decision regions by combining many local features. This can compensate for less hierarchical feature composition.
+
+  \item \textbf{Which dataset was the hardest for the MLP, and what properties of the dataset made it difficult?}\\
+  The spiral dataset was hardest. Its classes are intertwined and non-convex, so good performance requires curved, high-complexity decision boundaries and careful optimization. Small or undertrained models tend to underfit this geometry.
+
+  \item \textbf{How did depth and width affect training, in terms of sensitivity to initialization and training time?}\\
+  More depth generally increased expressiveness but also made optimization slightly more sensitive and slower per full convergence. More width usually improved fitting and robustness but increased per-epoch computation. Moderate depth plus moderate-to-high width was the most stable configuration.
+
+  \item \textbf{Did deeper networks always perform better? Why or why not?}\\
+  No. On simple datasets, extra depth provides little benefit and may only add optimization overhead. Performance depends on matching model capacity to data complexity and training setup; beyond that point, deeper models can plateau or occasionally underperform if not tuned well.
+\end{enumerate}
+
+\section*{Part 3 --- Reflection Questions}
+\begin{enumerate}[label=\textbf{\arabic*.}]
+  \item \textbf{Why does an MLP without nonlinearities collapse into a linear model?}\\
+  A composition of linear maps is still a linear map. If every layer is linear, the whole network is equivalent to one matrix multiplication plus bias, so it cannot represent nonlinear class boundaries.
+
+  \item \textbf{What would happen if ReLU backward incorrectly returned gradients for negative inputs?}\\
+  Neurons that should be inactive would still receive updates, which changes the effective function and breaks the true derivative. Training could become biased or unstable, and the model may converge to worse solutions because gradients no longer match the forward computation.
+
+  \item \textbf{Why is it useful to wrap the forward/backward logic inside \texttt{torch.autograd.Function} instead of writing manual gradient loops?}\\
+  \texttt{torch.autograd.Function} integrates custom ops into PyTorch's computation graph cleanly and efficiently. It keeps tensor operations vectorized, allows automatic chaining with other layers, and avoids error-prone manual per-parameter loop code. This is the standard way to define custom differentiable operations in PyTorch.
+\end{enumerate}
+
+\end{document}
